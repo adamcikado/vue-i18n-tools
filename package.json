@@ -1,6 +1,6 @@
 {
 	"name": "vue-i18n-tools",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Internationalization plugin for Vue.js",
 	"main": "dist/vue-i18n-tools.common.js",
 	"module": "dist/vue-i18n-tools.esm.js",
