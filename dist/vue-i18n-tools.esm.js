@@ -3,16 +3,10 @@
   * (c) 2018 Andrej Adamcik
   * @license MIT
   */
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.VueI18nTools = factory());
-}(this, (function () { 'use strict';
-
 var install = function(Vue) {
 	/* istanbul ignore if */
 	if (install.installed) {
-		{
+		if (process.env.NODE_ENV !== 'production') {
 			console.warn('already installed.');
 		}
 		return;
@@ -447,6 +441,4 @@ if (window.Vue) {
 I18n.version = '0.1.1';
 I18n.install = install;
 
-return I18n;
-
-})));
+export default I18n;

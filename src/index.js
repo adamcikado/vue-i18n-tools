@@ -1,0 +1,159 @@
+import { install } from './install';
+import sprintf from 'sprintf-js';
+const vsprintf = sprintf.vsprintf;
+
+
+class Locale {
+	constructor(name, data) {
+		this.locale = name;
+		this.plural = data.plural || [1, null];
+		this.translations = data.translations || {};
+	}
+}
+
+class I18n {
+	constructor(options) {
+		options = options || {};
+		
+		this.locale = options.locale || null;
+		this.locales = {};
+		this._dataListeners = [];
+		this.resourceUrl = options.resourceUrl || null;
+		
+		const locales = options.locales || {};
+		for (let locale in locales) {
+			this.addLocale(locale, locales[locale], true);
+		}
+		
+		if (!this.hasLocale(this.locale)) {
+			this.loadLocale(name).catch(e => {
+				// ignore
+			});
+		}
+	}
+	
+	hasLocale(name) {
+		return this.locales.hasOwnProperty(name);
+	}
+	
+	addLocale(name, data, silent = false) {
+		if (this.locales[name]) {
+			return;
+		}
+		
+		this.locales[name] = new Locale(name, data);
+		
+		!silent && this.locale === name && this.updateUI();
+	}
+	
+	removeLocale(name) {
+		delete this.locales[name];
+		
+		this.locale === name && this.updateUI();
+	}
+	
+	loadLocale(name) {
+		return new Promise((resolve, reject) => {
+			if (!this.resourceUrl) {
+				throw new Error(`Could not set locale "${name}", because it's no data and resource url is not set.`);
+			}
+
+			return fetch(this.resourceUrl + '/' + name + '.json')
+		}).then(resource => {
+			return resource.json();
+		}).then(data => {
+			this.addLocale(name, data);
+		});
+	}
+	
+	setLocale(name) {
+		if (this.locale === name) {
+			return Promise.resolve();
+		}
+
+		if (this.hasLocale(name)) {
+			this.locale = name;
+			this.updateUI();
+			
+			return Promise.resolve();
+		}
+
+		return this.loadLocale(name).then(() => {
+			this.locale = name;
+			this.updateUI();
+		});
+	}
+	
+	getTranslation(text, locale = this.locale) {
+		if (!this.locales[locale]) {
+			return;
+		}
+		
+		return this.locales[locale].translations[text];
+	}
+	
+	getTranslationVariant(translation, count, locale = this.locale) {
+		const plural = this.locales[locale].plural;
+		let variant = -1;
+		
+		for (let i = 0; i < plural.length; i++) {
+			if (typeof plural[i] === 'number' && count === plural[i]) {
+				variant = i;
+				break;
+			} else if (Array.isArray(plural[i]) && count >= plural[i][0] && count <= plural[i][1]) {
+				variant = i;
+				break;
+			} else if (plural[i] === null) {
+				variant = i;
+			}
+		}
+		
+		return translation[variant];
+	}
+	
+	translate(text, values) {
+		let translation = this.getTranslation(text);
+		
+		if (typeof translation === 'string') {
+			text = translation;
+		} else if (Array.isArray(translation) && translation.length && typeof values === 'number') {
+			const variant = this.getTranslationVariant(translation, values);
+			
+			variant && (text = variant);
+		}
+		
+		values = typeof values === 'number' ? [values] : values || [];
+		
+		return vsprintf(text, values);
+	}
+	
+	subscribeData(vm) {
+		this._dataListeners.push(vm);
+	}
+	
+	unsubscribeData(vm) {
+		const index = this._dataListeners.indexOf(vm);
+		index !== -1 && this._dataListeners.splice(index, 1);
+	}
+	
+	updateUI() {
+		let i = this._dataListeners.length;
+		while (i--) {
+			this._dataListeners[i].$nextTick(function() {
+				this.$forceUpdate();
+			});
+		}
+	}
+}
+
+I18n.install = install;
+
+if (window.Vue) {
+	window.Vue.use(I18n);
+}
+
+
+I18n.version = '__VERSION__';
+I18n.install = install;
+
+export default I18n;
