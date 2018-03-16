@@ -1,0 +1,37 @@
+{
+	"name": "vue-i18n-tools",
+	"version": "0.1.0",
+	"description": "",
+	"main": "dist/vue-i18n-tools.js",
+	"files": [
+		"dist/*"
+	],
+	"scripts": {
+		"build": "webpack",
+		"prepublish": "npm run build",
+		"dev": "webpack --watch --hide-modules --config ./example/webpack.config.js"
+	},
+	"keywords": [
+		"vue",
+		"plugin",
+		"i18n",
+		"translate"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/adamcikado/vue-i18n-tools.git"
+	},
+	"homepage": "https://github.com/adamcikado/vue-i18n-tools#readme",
+	"author": "adamcikado",
+	"license": "MIT",
+	"devDependencies": {
+		"babel-core": "^6.26.0",
+		"babel-loader": "^7.1.2",
+		"babel-preset-env": "^1.6.1",
+		"uglify-es": "^3.3.9",
+		"vue": "^2.5.13",
+		"vue-loader": "^14.0.3",
+		"vue-template-compiler": "^2.5.13",
+		"webpack": "^3.10.0"
+	}
+}
