@@ -1,5 +1,5 @@
 /*!
-  * vue-i18n-tools v0.1.1
+  * vue-i18n-tools v0.1.2
   * (c) 2018 Andrej Adamcik
   * @license MIT
   */
@@ -435,12 +435,12 @@ I18n.prototype.updateUI = function updateUI () {
 
 I18n.install = install;
 
-if (window.Vue) {
+if (typeof window !== 'undefined' && window.Vue) {
 	window.Vue.use(I18n);
 }
 
 
-I18n.version = '0.1.1';
+I18n.version = '0.1.2';
 I18n.install = install;
 
 module.exports = I18n;

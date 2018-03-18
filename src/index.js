@@ -148,7 +148,7 @@ class I18n {
 
 I18n.install = install;
 
-if (window.Vue) {
+if (typeof window !== 'undefined' && window.Vue) {
 	window.Vue.use(I18n);
 }
 
