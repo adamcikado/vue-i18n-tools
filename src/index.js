@@ -24,12 +24,6 @@ class I18n {
 		for (let locale in locales) {
 			this.addLocale(locale, locales[locale], true);
 		}
-		
-		if (!this.hasLocale(this.locale)) {
-			this.loadLocale(name).catch(e => {
-				// ignore
-			});
-		}
 	}
 	
 	hasLocale(name) {

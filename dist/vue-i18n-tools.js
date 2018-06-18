@@ -304,12 +304,6 @@ var I18n = function I18n(options) {
 	for (var locale in locales) {
 		this$1.addLocale(locale, locales[locale], true);
 	}
-		
-	if (!this.hasLocale(this.locale)) {
-		this.loadLocale(name).catch(function (e) {
-			// ignore
-		});
-	}
 };
 	
 I18n.prototype.hasLocale = function hasLocale (name) {
