@@ -1,5 +1,5 @@
 /*!
-  * vue-i18n-tools v0.1.2
+  * vue-i18n-tools v0.1.3
   * (c) 2018 Andrej Adamcik
   * @license MIT
   */
@@ -434,7 +434,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 
-I18n.version = '0.1.2';
+I18n.version = '0.1.3';
 I18n.install = install;
 
 module.exports = I18n;
