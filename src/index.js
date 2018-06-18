@@ -78,12 +78,20 @@ class I18n {
 		});
 	}
 	
-	getTranslation(text, locale = this.locale) {
+	getTranslation(key, locale = this.locale) {
 		if (!this.locales[locale]) {
 			return;
 		}
+
+		const parts = key.split('.');
 		
-		return this.locales[locale].translations[text];
+		let part;
+		let translation = this.locales[locale].translations;
+		while (translation && (part = parts.shift())) {
+			translation = translation[part];
+		}
+		
+		return translation;
 	}
 	
 	getTranslationVariant(translation, count, locale = this.locale) {

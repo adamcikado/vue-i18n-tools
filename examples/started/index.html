@@ -10,7 +10,7 @@
 
 <body>
 	<div id="app">
-		<p>{{ $t("Hello World!") }}</p>
+		<p>{{ $t("app.hello") }}</p>
 	</div>
 	<script>
 		Vue.use(VueI18nTools);
@@ -18,12 +18,18 @@
 		const locales = {
 			sk: {
 				translations: {
-					'Hello World!': 'Ahoj Svet!'
+					app: {
+						hello: 'Ahoj Svet App!'
+					},
+					hello: 'Ahoj Svet!'
 				}
 			},
 			de: {
 				translations: {
-					'Hello World!': 'Hallo Welt!'
+					app: {
+						hello: 'Hallo Welt App!'
+					},
+					hello: 'Hallo Welt!'
 				}
 			}
 		};
