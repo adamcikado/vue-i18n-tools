@@ -36,10 +36,15 @@
 		var i18n = new VueI18nTools({
 			locale: 'sk',
 			locales
-		})
+		});
+		
+		i18n.subscribeTranslate(function(name, isTranslated) {
+			console.log('translate', name, isTranslated);
+		});
+
 		new Vue({
 			i18n
-		}).$mount('#app')
+		}).$mount('#app');
 	</script>
 </body>
 

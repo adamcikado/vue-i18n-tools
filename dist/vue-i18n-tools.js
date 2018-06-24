@@ -1,5 +1,5 @@
 /*!
-  * vue-i18n-tools v0.1.5
+  * vue-i18n-tools v0.1.6
   * (c) 2018 Andrej Adamcik
   * @license MIT
   */
@@ -298,6 +298,7 @@ var I18n = function I18n(options) {
 	this.locale = options.locale || null;
 	this.locales = {};
 	this._dataListeners = [];
+	this._translateListeners = [];
 	this.resourceUrl = options.resourceUrl || null;
 		
 	var locales = options.locales || {};
@@ -404,17 +405,29 @@ I18n.prototype.getTranslationVariant = function getTranslationVariant (translati
 };
 	
 I18n.prototype.translate = function translate (text, values) {
+		var this$1 = this;
+
+	var key = text;
+	var isTranslated = false;
 	var translation = this.getTranslation(text);
 		
 	if (typeof translation === 'string') {
 		text = translation;
+		isTranslated = true;
 	} else if (Array.isArray(translation) && translation.length && typeof values === 'number') {
 		var variant = this.getTranslationVariant(translation, values);
 			
-		variant && (text = variant);
+		if (variant) {
+			text = variant;
+			isTranslated = true;
+		}
 	}
 		
 	values = typeof values === 'number' ? [values] : values || [];
+
+	for (var i = 0; i < this._translateListeners.length; i++) {
+		this$1._translateListeners[i](key, isTranslated);
+	}
 		
 	return vsprintf(text, values);
 };
@@ -426,6 +439,15 @@ I18n.prototype.subscribeData = function subscribeData (vm) {
 I18n.prototype.unsubscribeData = function unsubscribeData (vm) {
 	var index = this._dataListeners.indexOf(vm);
 	index !== -1 && this._dataListeners.splice(index, 1);
+};
+
+I18n.prototype.subscribeTranslate = function subscribeTranslate (handler) {
+	this._translateListeners.push(handler);
+};
+
+I18n.prototype.unsubscribeTranslate = function unsubscribeTranslate (handler) {
+	var index = this._translateListeners.indexOf(handler);
+	index !== -1 && this._translateListeners.splice(index, 1);
 };
 	
 I18n.prototype.updateUI = function updateUI () {
@@ -446,7 +468,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 
-I18n.version = '0.1.5';
+I18n.version = '0.1.6';
 I18n.install = install;
 
 return I18n;

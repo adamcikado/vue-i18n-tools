@@ -18,6 +18,7 @@ class I18n {
 		this.locale = options.locale || null;
 		this.locales = {};
 		this._dataListeners = [];
+		this._translateListeners = [];
 		this.resourceUrl = options.resourceUrl || null;
 		
 		const locales = options.locales || {};
@@ -114,17 +115,27 @@ class I18n {
 	}
 	
 	translate(text, values) {
+		const key = text;
+		let isTranslated = false;
 		let translation = this.getTranslation(text);
 		
 		if (typeof translation === 'string') {
 			text = translation;
+			isTranslated = true;
 		} else if (Array.isArray(translation) && translation.length && typeof values === 'number') {
 			const variant = this.getTranslationVariant(translation, values);
 			
-			variant && (text = variant);
+			if (variant) {
+				text = variant;
+				isTranslated = true;
+			}
 		}
 		
 		values = typeof values === 'number' ? [values] : values || [];
+
+		for (let i = 0; i < this._translateListeners.length; i++) {
+			this._translateListeners[i](key, isTranslated);
+		}
 		
 		return vsprintf(text, values);
 	}
@@ -136,6 +147,15 @@ class I18n {
 	unsubscribeData(vm) {
 		const index = this._dataListeners.indexOf(vm);
 		index !== -1 && this._dataListeners.splice(index, 1);
+	}
+
+	subscribeTranslate(handler) {
+		this._translateListeners.push(handler);
+	}
+
+	unsubscribeTranslate(handler) {
+		const index = this._translateListeners.indexOf(handler);
+		index !== -1 && this._translateListeners.splice(index, 1);
 	}
 	
 	updateUI() {
