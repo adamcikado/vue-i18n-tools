@@ -1,5 +1,5 @@
 /*!
-  * vue-i18n-tools v0.1.6
+  * vue-i18n-tools v0.1.7
   * (c) 2018 Andrej Adamcik
   * @license MIT
   */
@@ -297,6 +297,10 @@ var I18n = function I18n(options) {
 		
 	this.locale = options.locale || null;
 	this.locales = {};
+
+	this.useKeys = typeof options.useKeys === 'boolean' ? options.useKeys : true;
+	this.autoLoadLocale = typeof options.autoLoadLocale === 'boolean' ? options.autoLoadLocale : false;
+
 	this._dataListeners = [];
 	this._translateListeners = [];
 	this.resourceUrl = options.resourceUrl || null;
@@ -359,6 +363,12 @@ I18n.prototype.setLocale = function setLocale (name) {
 		return Promise.resolve();
 	}
 
+	if (!this.autoLoadLocale) {
+		this.locale = name;
+		this.updateUI();
+		return;
+	}
+
 	return this.loadLocale(name).then(function () {
 		this$1.locale = name;
 		this$1.updateUI();
@@ -370,6 +380,10 @@ I18n.prototype.getTranslation = function getTranslation (key, locale) {
 
 	if (!this.locales[locale]) {
 		return;
+	}
+
+	if (!this.useKeys) {
+		return this.locales[locale].translations[key];
 	}
 
 	var parts = key.split('.');
@@ -468,7 +482,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 
-I18n.version = '0.1.6';
+I18n.version = '0.1.7';
 I18n.install = install;
 
 return I18n;

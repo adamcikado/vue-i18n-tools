@@ -17,6 +17,10 @@ class I18n {
 		
 		this.locale = options.locale || null;
 		this.locales = {};
+
+		this.useKeys = typeof options.useKeys === 'boolean' ? options.useKeys : true;
+		this.autoLoadLocale = typeof options.autoLoadLocale === 'boolean' ? options.autoLoadLocale : false;
+
 		this._dataListeners = [];
 		this._translateListeners = [];
 		this.resourceUrl = options.resourceUrl || null;
@@ -73,6 +77,12 @@ class I18n {
 			return Promise.resolve();
 		}
 
+		if (!this.autoLoadLocale) {
+			this.locale = name;
+			this.updateUI();
+			return;
+		}
+
 		return this.loadLocale(name).then(() => {
 			this.locale = name;
 			this.updateUI();
@@ -82,6 +92,10 @@ class I18n {
 	getTranslation(key, locale = this.locale) {
 		if (!this.locales[locale]) {
 			return;
+		}
+
+		if (!this.useKeys) {
+			return this.locales[locale].translations[key];
 		}
 
 		const parts = key.split('.');
